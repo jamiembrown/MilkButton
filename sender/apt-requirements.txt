@@ -1,0 +1,5 @@
+libpam0g-dev
+python3-venv
+python3-pip
+python3-evdev
+avahi-utils

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Milk Button — Config</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --surface: #1a1a1a;
+      --border: #2a2a2a;
+      --text: #e8e8e8;
+      --text-muted: #888;
+      --accent: #7c9c6b;
+      --accent-hover: #8faf7a;
+      --danger: #c75c5c;
+      --danger-hover: #d97070;
+      --radius: 10px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "DM Sans", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 24px;
+    }
+    .container {
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0 0 24px;
+      letter-spacing: -0.02em;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    .card h2 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin: 0 0 16px;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    input[type="text"],
+    input[type="password"],
+    input[type="number"] {
+      width: 100%;
+      padding: 12px 14px;
+      font: inherit;
+      font-size: 1rem;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(124, 156, 107, 0.25);
+    }
+    input[type="number"] { margin-bottom: 0; }
+    .row { margin-bottom: 20px; }
+    .row:last-child { margin-bottom: 0; }
+    .slider-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    input[type="range"] {
+      flex: 1;
+      height: 8px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: var(--border);
+      border-radius: 4px;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      border: none;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      border: none;
+    }
+    .slider-value {
+      min-width: 4rem;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 20px;
+      font: inherit;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      width: 100%;
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-danger {
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid var(--danger);
+      padding: 8px 14px;
+      font-size: 0.85rem;
+    }
+    .btn-danger:hover { background: var(--danger); color: #fff; }
+    .btn-outline {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { color: var(--text); border-color: var(--text-muted); }
+    .error {
+      font-size: 0.9rem;
+      color: var(--danger);
+      margin-top: 8px;
+    }
+    .file-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 16px;
+    }
+    .file-list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+    .file-list li:last-child { margin-bottom: 0; }
+    .upload-wrap {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .upload-wrap input[type="file"] {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .header-row h1 { margin: 0; }
+    .hidden { display: none !important; }
+    .status {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+    .status.ok { color: var(--accent); }
+    .status.err { color: var(--danger); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="login-view" class="card">
+      <h1>Milk Button</h1>
+      <p style="color: var(--text-muted); margin: 0 0 20px;">Sign in with your system account.</p>
+      <form id="login-form">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" autocomplete="username" required>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" autocomplete="current-password" required>
+        <div id="login-error" class="error hidden"></div>
+        <button type="submit" class="btn btn-primary">Sign in</button>
+      </form>
+    </div>
+
+    <div id="dashboard-view" class="hidden">
+      <div class="header-row">
+        <h1>Milk Button</h1>
+        <button type="button" class="btn btn-outline" id="logout-btn">Sign out</button>
+      </div>
+
+      <div class="card">
+        <h2>Playback settings</h2>
+        <div class="row">
+          <label for="repeats">Repeat each message</label>
+          <input type="number" id="repeats" min="{{ repeats_min }}" max="{{ repeats_max }}" value="2">
+          <span class="status" id="repeats-status"></span>
+        </div>
+        <div class="row">
+          <label for="volume">Volume</label>
+          <div class="slider-wrap">
+            <input type="range" id="volume" min="{{ volume_min }}" max="{{ volume_max }}" value="32768">
+            <span class="slider-value" id="volume-value">32768</span>
+          </div>
+          <span class="status" id="volume-status"></span>
+        </div>
+        <div class="row">
+          <label for="delay">Delay before next message (seconds)</label>
+          <input type="number" id="delay" min="{{ delay_min }}" max="{{ delay_max }}" value="10">
+          <span class="status" id="delay-status"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Audio files</h2>
+        <ul class="file-list" id="file-list"></ul>
+        <div class="upload-wrap">
+          <input type="file" id="file-input" accept="audio/*">
+          <button type="button" class="btn btn-primary" id="upload-btn">Upload</button>
+          <span class="status" id="upload-status"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const REPEATS_MIN = {{ repeats_min }};
+    const REPEATS_MAX = {{ repeats_max }};
+    const DELAY_MIN = {{ delay_min }};
+    const DELAY_MAX = {{ delay_max }};
+    const VOLUME_MIN = {{ volume_min }};
+    const VOLUME_MAX = {{ volume_max }};
+
+    const loginView = document.getElementById("login-view");
+    const dashboardView = document.getElementById("dashboard-view");
+    const loginForm = document.getElementById("login-form");
+    const loginError = document.getElementById("login-error");
+    const logoutBtn = document.getElementById("logout-btn");
+    const fileList = document.getElementById("file-list");
+    const fileInput = document.getElementById("file-input");
+    const uploadBtn = document.getElementById("upload-btn");
+    const uploadStatus = document.getElementById("upload-status");
+
+    function show(el) { el.classList.remove("hidden"); }
+    function hide(el) { el.classList.add("hidden"); }
+    function setStatus(id, text, ok) {
+      const el = document.getElementById(id);
+      el.textContent = text;
+      el.className = "status " + (ok ? "ok" : "err");
+      if (text) show(el); else hide(el);
+    }
+
+    function api(method, path, body) {
+      const opts = { method, credentials: "same-origin" };
+      if (body) {
+        opts.headers = { "Content-Type": "application/json" };
+        opts.body = typeof body === "string" ? body : JSON.stringify(body);
+      }
+      return fetch(path, opts);
+    }
+
+    function patchConfig(partial) {
+      return api("PATCH", "/api/config", partial).then(r => {
+        if (!r.ok) throw new Error("Failed to save");
+        return r.json();
+      });
+    }
+
+    function showLogin(err) {
+      hide(dashboardView);
+      show(loginView);
+      loginError.textContent = err || "";
+      if (err) show(loginError); else hide(loginError);
+    }
+
+    function showDashboard() {
+      hide(loginView);
+      show(dashboardView);
+      loadConfig();
+      loadFiles();
+    }
+
+    function loadConfig() {
+      api("GET", "/api/config")
+        .then(r => r.json())
+        .then(config => {
+          document.getElementById("repeats").value = config.repeats;
+          document.getElementById("delay").value = config.delay;
+          document.getElementById("volume").value = config.volume;
+          document.getElementById("volume-value").textContent = config.volume;
+        });
+    }
+
+    function loadFiles() {
+      api("GET", "/api/files")
+        .then(r => r.json())
+        .then(files => {
+          fileList.innerHTML = "";
+          files.forEach(name => {
+            const li = document.createElement("li");
+            li.innerHTML = `<span>${escapeHtml(name)}</span><button type="button" class="btn btn-danger" data-name="${escapeAttr(name)}">Delete</button>`;
+            li.querySelector("button").addEventListener("click", () => deleteFile(name));
+            fileList.appendChild(li);
+          });
+        });
+    }
+
+    function escapeHtml(s) {
+      const div = document.createElement("div");
+      div.textContent = s;
+      return div.innerHTML;
+    }
+    function escapeAttr(s) {
+      return s.replace(/"/g, "&quot;");
+    }
+
+    function deleteFile(name) {
+      if (!confirm(`Delete "${name}"?`)) return;
+      api("DELETE", "/api/files/" + encodeURIComponent(name))
+        .then(r => {
+          if (!r.ok) throw new Error("Delete failed");
+          loadFiles();
+        })
+        .catch(() => setStatus("upload-status", "Delete failed", false));
+    }
+
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      hide(loginError);
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+      api("POST", "/login", { username, password })
+        .then(r => r.json().then(data => ({ ok: r.ok, data })))
+        .then(({ ok, data }) => {
+          if (ok && data.ok) showDashboard();
+          else showLogin(data.error || "Login failed");
+        })
+        .catch(() => showLogin("Login failed"));
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      api("POST", "/logout").then(() => showLogin());
+    });
+
+    document.getElementById("repeats").addEventListener("change", function() {
+      let v = parseInt(this.value, 10);
+      v = Math.max(REPEATS_MIN, Math.min(REPEATS_MAX, isNaN(v) ? REPEATS_MIN : v));
+      this.value = v;
+      patchConfig({ repeats: v })
+        .then(() => setStatus("repeats-status", "Saved", true))
+        .catch(() => setStatus("repeats-status", "Save failed", false));
+    });
+
+    const volumeEl = document.getElementById("volume");
+    const volumeValueEl = document.getElementById("volume-value");
+    let volumeSaveTimer = null;
+    volumeEl.addEventListener("input", function() {
+      volumeValueEl.textContent = this.value;
+      let v = parseInt(this.value, 10);
+      v = Math.max(VOLUME_MIN, Math.min(VOLUME_MAX, isNaN(v) ? VOLUME_MIN : v));
+      clearTimeout(volumeSaveTimer);
+      volumeSaveTimer = setTimeout(() => {
+        patchConfig({ volume: v })
+          .then(() => setStatus("volume-status", "Saved", true))
+          .catch(() => setStatus("volume-status", "Save failed", false));
+      }, 300);
+    });
+
+    document.getElementById("delay").addEventListener("change", function() {
+      let v = parseInt(this.value, 10);
+      v = Math.max(DELAY_MIN, Math.min(DELAY_MAX, isNaN(v) ? DELAY_MIN : v));
+      this.value = v;
+      patchConfig({ delay: v })
+        .then(() => setStatus("delay-status", "Saved", true))
+        .catch(() => setStatus("delay-status", "Save failed", false));
+    });
+
+    uploadBtn.addEventListener("click", () => {
+      const file = fileInput.files[0];
+      if (!file) {
+        setStatus("upload-status", "Choose a file first", false);
+        return;
+      }
+      const form = new FormData();
+      form.append("file", file);
+      uploadStatus.textContent = "";
+      fetch("/api/files", { method: "POST", credentials: "same-origin", body: form })
+        .then(r => r.json().catch(() => ({})).then(data => ({ ok: r.ok, data })))
+        .then(({ ok, data }) => {
+          if (ok) {
+            setStatus("upload-status", "Uploaded " + (data.name || ""), true);
+            fileInput.value = "";
+            loadFiles();
+          } else {
+            setStatus("upload-status", data.error || "Upload failed", false);
+          }
+        })
+        .catch(() => setStatus("upload-status", "Upload failed", false));
+    });
+
+    api("GET", "/api/config")
+      .then(r => {
+        if (r.ok) showDashboard();
+        else showLogin();
+      })
+      .catch(() => showLogin());
+  </script>
+</body>
+</html>

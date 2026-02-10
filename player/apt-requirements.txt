@@ -1,0 +1,6 @@
+libpam0g-dev
+python3-venv
+python3-pip
+mpg123
+avahi-daemon
+avahi-utils
