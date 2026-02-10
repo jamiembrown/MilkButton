@@ -1,0 +1,5 @@
+flask
+six
+python-pam
+zeroconf
+evdev
