@@ -8,6 +8,31 @@ if [ -z "$USER_NAME" ]; then
   exit 1
 fi
 
+# Stop service if exists
+if systemctl list-unit-files | grep -q milkpi-sender; then
+  echo "Removing old MilkPi Sender..."
+
+  systemctl stop milkpi-sender || true
+  systemctl disable milkpi-sender || true
+
+  systemctl stop milkpi-listener || true
+  systemctl disable milkpi-listener || true
+
+  # Remove systemd unit
+  rm -f /etc/systemd/system/milkpi-sender.service
+  rm -f /etc/systemd/system/milkpi-listener.service
+
+  # Reload systemd
+  systemctl daemon-reload
+  systemctl reset-failed || true
+
+  # Remove app + venv
+  rm -rf /opt/milkpi/sender
+  rm -rf /opt/milkpi/venv
+
+  echo "Old install removed."
+fi
+
 echo "Installing MilkPi Sender for $USER_NAME"
 
 wait_for_apt() {

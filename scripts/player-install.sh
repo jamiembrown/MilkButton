@@ -8,6 +8,31 @@ if [ -z "$USER_NAME" ]; then
   exit 1
 fi
 
+# Stop service if exists
+if systemctl list-unit-files | grep -q milkpi-player; then
+  echo "Removing old MilkPi Player..."
+
+  systemctl stop milkpi-player || true
+  systemctl disable milkpi-player || true
+
+  # Remove systemd unit
+  rm -f /etc/systemd/system/milkpi-player.service
+
+  # Reload systemd
+  systemctl daemon-reload
+  systemctl reset-failed || true
+
+  # Remove app + venv
+  rm -rf /opt/milkpi/player
+  rm -rf /opt/milkpi/venv
+
+  # Remove avahi service
+  rm -f /etc/avahi/services/avahi.milkpi.service
+  systemctl restart avahi-daemon || true
+
+  echo "Old install removed."
+fi
+
 echo "Installing MilkPi Player for $USER_NAME"
 
 wait_for_apt() {
