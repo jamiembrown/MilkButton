@@ -57,7 +57,7 @@ cp -r player/* /opt/milkpi/player
 chown -R $USER_NAME:$USER_NAME /opt/milkpi
 
 # Python deps
-python3 -m venv /opt/milkpi/venv
+python3 -m venv --system-site-packages /opt/milkpi/venv
 
 /opt/milkpi/venv/bin/pip install --upgrade pip
 /opt/milkpi/venv/bin/pip install -r /opt/milkpi/player/requirements.txt
