@@ -2,9 +2,10 @@
 """
 Milk Button Key Listener: watches for key/button events and triggers the sender.
 
-Runs headless (no GUI) using evdev to read from /dev/input/event*. On any key-down
-event, POSTs to the sender's /send endpoint so the sender forwards the announce
-request to the player. Run alongside sender.py on the same device (from the sender/ directory).
+Runs headless (no GUI) using evdev to read from /dev/input/event*. Listens to
+all input devices that support key events (EV_KEY), so multiple keyboards/buttons
+are supported. On any key-down event, POSTs to the sender's /send endpoint.
+Run alongside sender.py on the same device (from the sender/ directory).
 
 Permissions: on Linux, reading input devices usually requires the user to be in the
 'input' group (e.g. sudo usermod -aG input $USER) or to run as root.
@@ -15,12 +16,14 @@ Permissions: on Linux, reading input devices usually requires the user to be in 
 
 from __future__ import annotations
 
+import fcntl
 import logging
 import os
+import select
 import time
 import urllib.error
 import urllib.request
-from typing import Any
+from typing import Any, List
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -31,22 +34,23 @@ SENDER_URL: str = os.environ.get("SENDER_URL", "http://127.0.0.1:8000/send")
 DEBOUNCE: float = 1.0
 
 
-def find_input_device() -> Any:
+def find_all_input_devices() -> List[Any]:
     """
-    Find the first evdev input device that supports key events (keyboard or button).
-    Returns the device object or None. Skips devices that cannot be opened (e.g. permission).
+    Find all evdev input devices that support key events (keyboard or button).
+    Returns a list of device objects. Skips devices that cannot be opened (e.g. permission).
     """
     from evdev import InputDevice, ecodes, list_devices
 
-    for path in list_devices():
+    devices: List[Any] = []
+    for path in sorted(list_devices()):
         try:
             dev = InputDevice(path)
         except (OSError, PermissionError):
             continue
         if ecodes.EV_KEY in dev.capabilities():
-            logger.info("Using input device: %s (%s)", path, dev.name)
-            return dev
-    return None
+            logger.info("Listening on: %s (%s)", path, dev.name)
+            devices.append(dev)
+    return devices
 
 
 def send_trigger() -> None:
@@ -70,7 +74,7 @@ def send_trigger() -> None:
 
 
 def main() -> None:
-    """Discover an input device, then run the read loop and call send_trigger on key down (debounced)."""
+    """Discover all EV_KEY input devices and listen on them; on key down (debounced) call send_trigger."""
     try:
         from evdev import InputDevice, ecodes, list_devices
     except ImportError as e:
@@ -79,27 +83,47 @@ def main() -> None:
         )
         raise SystemExit(1) from e
 
-    dev: Any = find_input_device()
-    if not dev:
+    devices: List[Any] = find_all_input_devices()
+    if not devices:
         logger.error(
             "No input device with key events found. Check permissions (e.g. add user to 'input' group)."
         )
         raise SystemExit(1)
 
-    last: float = 0.0
-    logger.info("Listening for button/key presses (debounce %.1fs)...", DEBOUNCE)
+    # Non-blocking so select() and read_one() work together
+    for dev in devices:
+        try:
+            fd = dev.fileno()
+            fl = fcntl.fcntl(fd, fcntl.F_GETFL)
+            fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
+        except Exception as e:
+            logger.warning("Could not set non-blocking on %s: %s", dev.name, e)
 
-    for event in dev.read_loop():
-        if event.type != ecodes.EV_KEY:
-            continue
-        # EV_KEY value: 1 = key down, 0 = release, 2 = repeat
-        if event.value != 1:
-            continue
-        now: float = time.monotonic()
-        if now - last < DEBOUNCE:
-            continue
-        last = now
-        send_trigger()
+    fd_to_dev: dict[int, Any] = {dev.fileno(): dev for dev in devices}
+    last: float = 0.0
+    logger.info("Listening for button/key presses on %d device(s) (debounce %.1fs)...", len(devices), DEBOUNCE)
+
+    while True:
+        r, _, _ = select.select(list(fd_to_dev.keys()), [], [])
+        for fd in r:
+            dev = fd_to_dev[fd]
+            while True:
+                try:
+                    event = dev.read_one()
+                except (BlockingIOError, OSError):
+                    break
+                if event is None:
+                    break
+                if event.type != ecodes.EV_KEY:
+                    continue
+                # EV_KEY value: 1 = key down, 0 = release, 2 = repeat
+                if event.value != 1:
+                    continue
+                now: float = time.monotonic()
+                if now - last < DEBOUNCE:
+                    continue
+                last = now
+                send_trigger()
 
 
 if __name__ == "__main__":
