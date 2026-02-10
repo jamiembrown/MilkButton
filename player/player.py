@@ -22,6 +22,7 @@ import time
 import json
 import re
 import logging
+import alsaaudio
 
 # -----------------------------------------------------------------------------
 # Logging and optional PAM
@@ -131,6 +132,24 @@ def authenticate(username: str, password: str) -> bool:
 # Playback
 # -----------------------------------------------------------------------------
 
+def find_audio_device():
+
+    pcms = alsaaudio.pcms()
+
+    blacklist = ("vc4hdmi", "HDMI")
+
+    # Prefer USB-like devices
+    for p in pcms:
+        if p.startswith("plughw") and not any(b in p for b in blacklist):
+            return p
+
+    # Any plughw
+    for p in pcms:
+        if p.startswith("plughw"):
+            return p
+
+    return "default" if "default" in pcms else None
+
 def play_audio(
     file_paths: List[str],
     repeats: int = 2,
@@ -147,10 +166,17 @@ def play_audio(
     if now - LAST_PLAYED < delay:
         return True
 
+    # Find device dynamically
+    device = find_audio_device()
+
+    if not device:
+        logger.error("No audio device found")
+        return False
+
     params: List[str] = [
         "mpg123",
-        "-f",
-        str(volume),
+        "-a", device,
+        "-f", str(volume),
         "-q",
     ]
     params.extend(file_paths * repeats)

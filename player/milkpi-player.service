@@ -1,12 +1,14 @@
 [Unit]
 Description=MilkPi Player
-After=network.target avahi-daemon.service
+After=network.target avahi-daemon.service sound.target pipewire.service
+Wants=sound.target
 
 [Service]
 Type=simple
 User=%i
 WorkingDirectory=/opt/milkpi/player
-ExecStart=/opt/milkpi/venv/bin/python opt/milkpi/player/player.py
+ExecStartPre=/bin/sleep 5
+ExecStart=/opt/milkpi/venv/bin/python /opt/milkpi/player/player.py
 Restart=always
 RestartSec=5
 Environment=PYTHONUNBUFFERED=1

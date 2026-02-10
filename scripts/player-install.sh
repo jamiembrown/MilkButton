@@ -23,7 +23,7 @@ wait_for_apt
 
 # Packages
 apt update
-apt install -y libpam0g-dev python3-venv python3-pip mpg123 avahi-daemon avahi-utils
+apt install -y libpam0g-dev python3-venv python3-pip mpg123 avahi-daemon avahi-utils python3-alsaaudio
 
 # App
 mkdir -p /opt/milkpi/player
