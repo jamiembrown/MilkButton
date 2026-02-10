@@ -409,6 +409,11 @@
         .catch(() => setStatus("delay-status", "Save failed", false));
     });
 
+    function setUploadButton(uploading) {
+      uploadBtn.disabled = uploading;
+      uploadBtn.textContent = uploading ? "Uploading..." : "Upload";
+    }
+
     uploadBtn.addEventListener("click", () => {
       const file = fileInput.files[0];
       if (!file) {
@@ -418,9 +423,11 @@
       const form = new FormData();
       form.append("file", file);
       uploadStatus.textContent = "";
+      setUploadButton(true);
       fetch("/api/files", { method: "POST", credentials: "same-origin", body: form })
         .then(r => r.json().catch(() => ({})).then(data => ({ ok: r.ok, data })))
         .then(({ ok, data }) => {
+          setUploadButton(false);
           if (ok) {
             setStatus("upload-status", "Uploaded " + (data.name || ""), true);
             fileInput.value = "";
@@ -429,7 +436,10 @@
             setStatus("upload-status", data.error || "Upload failed", false);
           }
         })
-        .catch(() => setStatus("upload-status", "Upload failed", false));
+        .catch(() => {
+          setUploadButton(false);
+          setStatus("upload-status", "Upload failed", false);
+        });
     });
 
     api("GET", "/api/config")

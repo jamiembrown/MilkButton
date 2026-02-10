@@ -23,5 +23,4 @@ __pycache__/
 .coverage.*.*
 .coverage.*.*.*
 .coverage.*.*.*.*
-player/audio/
 config.json
