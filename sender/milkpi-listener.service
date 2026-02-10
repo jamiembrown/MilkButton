@@ -1,0 +1,13 @@
+[Unit]
+Description=MilkPi Button Listener
+After=network.target
+
+[Service]
+Type=simple
+User=%i
+WorkingDirectory=/opt/milkpi/sender
+ExecStart=/opt/milkpi/venv/bin/python /opt/milkpi/sender/keylistener.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

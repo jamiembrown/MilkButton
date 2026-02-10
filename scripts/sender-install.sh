@@ -1,0 +1,45 @@
+#!/bin/bash
+set -e
+
+USER_NAME=${SUDO_USER}
+
+if [ -z "$USER_NAME" ]; then
+  echo "Run with sudo"
+  exit 1
+fi
+
+echo "Installing MilkPi Sender for $USER_NAME"
+
+# Packages
+apt update
+apt install -y libpam0g-dev python3-venv python3-pip python3-evdev avahi-utils
+
+# Permissions
+usermod -aG input $USER_NAME
+
+# App
+mkdir -p /opt/milkpi/sender
+cp -r sender/* /opt/milkpi/sender
+
+chown -R $USER_NAME:$USER_NAME /opt/milkpi
+
+# Python deps
+python3 -m venv /opt/milkpi/venv
+
+/opt/milkpi/venv/bin/pip install --upgrade pip
+/opt/milkpi/venv/bin/pip install -r /opt/milkpi/sender/requirements.txt
+
+# systemd
+cp sender/*.service /etc/systemd/system/
+
+sed -i "s/%i/$USER_NAME/" /etc/systemd/system/milkpi-*.service
+
+systemctl daemon-reload
+systemctl enable milkpi-sender
+systemctl enable milkpi-listener
+
+systemctl start milkpi-sender
+systemctl start milkpi-listener
+
+echo "Sender installed."
+echo "Reboot recommended."
