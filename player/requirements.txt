@@ -1,4 +1,4 @@
 flask
 python-pam
 six
-alsaaudio
+python3-alsaaudio
